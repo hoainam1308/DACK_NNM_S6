@@ -82,7 +82,8 @@ const seatChangeHistorySchema = new mongoose.Schema({
 // Schema cho Genre (Thể loại phim)
 const genreSchema = new mongoose.Schema({
     genreName: { type: String, required: true },
-    description: { type: String }
+    description: { type: String },
+    isDeleted: { type: Boolean, default: false }
 }, { timestamps: true });
 
 // Schema cho Movie (Phim)

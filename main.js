@@ -8,6 +8,7 @@ app.use(express.json())
 // Import routes
 app.use('/api/seats', require('./routes/seatRoutes'));
 app.use('/api/genres', require('./routes/genreRoutes'));
+app.use('/api/movies', require('./routes/movieRoutes'));
 
 // Kết nối MongoDB với cơ sở dữ liệu QLDV
 mongoose.connect('mongodb://127.0.0.1:27017/cinema_db')
