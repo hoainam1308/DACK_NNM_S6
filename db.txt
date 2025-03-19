@@ -1,0 +1,511 @@
+-- MariaDB dump 10.19  Distrib 10.4.32-MariaDB, for Win64 (AMD64)
+--
+-- Host: localhost    Database: db_cinema
+-- ------------------------------------------------------
+-- Server version	10.4.32-MariaDB
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `booking`
+--
+
+DROP TABLE IF EXISTS `booking`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `booking` (
+  `booking_id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `booking_time` timestamp NOT NULL DEFAULT current_timestamp(),
+  `total_amount` decimal(10,2) NOT NULL,
+  `payment_method_id` int(11) DEFAULT NULL,
+  `payment_status` enum('Chưa thanh toán','Đã thanh toán','Đã hủy') DEFAULT 'Chưa thanh toán',
+  `booking_status` enum('Đang xử lý','Đã xác nhận','Đã hủy') DEFAULT 'Đang xử lý',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`booking_id`),
+  KEY `user_id` (`user_id`),
+  KEY `payment_method_id` (`payment_method_id`),
+  CONSTRAINT `booking_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`),
+  CONSTRAINT `booking_ibfk_2` FOREIGN KEY (`payment_method_id`) REFERENCES `paymentmethod` (`payment_method_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `bookingconcession`
+--
+
+DROP TABLE IF EXISTS `bookingconcession`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `bookingconcession` (
+  `booking_concession_id` int(11) NOT NULL AUTO_INCREMENT,
+  `booking_id` int(11) NOT NULL,
+  `item_id` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `price` decimal(10,2) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`booking_concession_id`),
+  KEY `booking_id` (`booking_id`),
+  KEY `item_id` (`item_id`),
+  CONSTRAINT `bookingconcession_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `booking` (`booking_id`),
+  CONSTRAINT `bookingconcession_ibfk_2` FOREIGN KEY (`item_id`) REFERENCES `concessionitem` (`item_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `bookingdetail`
+--
+
+DROP TABLE IF EXISTS `bookingdetail`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `bookingdetail` (
+  `booking_detail_id` int(11) NOT NULL AUTO_INCREMENT,
+  `booking_id` int(11) NOT NULL,
+  `showtime_id` int(11) NOT NULL,
+  `seat_id` int(11) NOT NULL,
+  `ticket_type_id` int(11) NOT NULL,
+  `price` decimal(10,2) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`booking_detail_id`),
+  UNIQUE KEY `showtime_id` (`showtime_id`,`seat_id`),
+  KEY `booking_id` (`booking_id`),
+  KEY `seat_id` (`seat_id`),
+  KEY `ticket_type_id` (`ticket_type_id`),
+  CONSTRAINT `bookingdetail_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `booking` (`booking_id`),
+  CONSTRAINT `bookingdetail_ibfk_2` FOREIGN KEY (`showtime_id`) REFERENCES `showtime` (`showtime_id`),
+  CONSTRAINT `bookingdetail_ibfk_3` FOREIGN KEY (`seat_id`) REFERENCES `seat` (`seat_id`),
+  CONSTRAINT `bookingdetail_ibfk_4` FOREIGN KEY (`ticket_type_id`) REFERENCES `tickettype` (`ticket_type_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `cinemacomplex`
+--
+
+DROP TABLE IF EXISTS `cinemacomplex`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `cinemacomplex` (
+  `cinema_complex_id` int(11) NOT NULL AUTO_INCREMENT,
+  `complex_name` varchar(100) NOT NULL,
+  `address` text NOT NULL,
+  `city` varchar(50) NOT NULL,
+  `province` varchar(50) NOT NULL,
+  `phone_number` varchar(15) DEFAULT NULL,
+  `email` varchar(100) DEFAULT NULL,
+  `opening_time` time DEFAULT NULL,
+  `closing_time` time DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `image` varchar(255) DEFAULT NULL,
+  `is_active` tinyint(1) DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`cinema_complex_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `concessionitem`
+--
+
+DROP TABLE IF EXISTS `concessionitem`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `concessionitem` (
+  `item_id` int(11) NOT NULL AUTO_INCREMENT,
+  `item_name` varchar(100) NOT NULL,
+  `description` text DEFAULT NULL,
+  `price` decimal(10,2) NOT NULL,
+  `image` varchar(255) DEFAULT NULL,
+  `category` varchar(50) DEFAULT NULL,
+  `is_active` tinyint(1) DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`item_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `genre`
+--
+
+DROP TABLE IF EXISTS `genre`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `genre` (
+  `genre_id` int(11) NOT NULL AUTO_INCREMENT,
+  `genre_name` varchar(50) NOT NULL,
+  `description` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`genre_id`),
+  UNIQUE KEY `genre_name` (`genre_name`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `movie`
+--
+
+DROP TABLE IF EXISTS `movie`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `movie` (
+  `movie_id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) NOT NULL,
+  `original_title` varchar(255) DEFAULT NULL,
+  `director` varchar(100) DEFAULT NULL,
+  `cast` text DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `duration` int(11) NOT NULL,
+  `release_date` date NOT NULL,
+  `end_date` date DEFAULT NULL,
+  `country` varchar(50) DEFAULT NULL,
+  `language` varchar(50) DEFAULT NULL,
+  `age_restriction` varchar(10) DEFAULT NULL,
+  `trailer_url` varchar(255) DEFAULT NULL,
+  `poster_url` varchar(255) DEFAULT NULL,
+  `is_active` tinyint(1) DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`movie_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `moviegenre`
+--
+
+DROP TABLE IF EXISTS `moviegenre`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `moviegenre` (
+  `movie_id` int(11) NOT NULL,
+  `genre_id` int(11) NOT NULL,
+  PRIMARY KEY (`movie_id`,`genre_id`),
+  KEY `genre_id` (`genre_id`),
+  CONSTRAINT `moviegenre_ibfk_1` FOREIGN KEY (`movie_id`) REFERENCES `movie` (`movie_id`),
+  CONSTRAINT `moviegenre_ibfk_2` FOREIGN KEY (`genre_id`) REFERENCES `genre` (`genre_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `moviereview`
+--
+
+DROP TABLE IF EXISTS `moviereview`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `moviereview` (
+  `review_id` int(11) NOT NULL AUTO_INCREMENT,
+  `movie_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `rating` int(11) NOT NULL CHECK (`rating` between 1 and 10),
+  `comment` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`review_id`),
+  UNIQUE KEY `movie_id` (`movie_id`,`user_id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `moviereview_ibfk_1` FOREIGN KEY (`movie_id`) REFERENCES `movie` (`movie_id`),
+  CONSTRAINT `moviereview_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `paymenthistory`
+--
+
+DROP TABLE IF EXISTS `paymenthistory`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `paymenthistory` (
+  `payment_id` int(11) NOT NULL AUTO_INCREMENT,
+  `booking_id` int(11) NOT NULL,
+  `payment_method_id` int(11) NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `transaction_id` varchar(100) DEFAULT NULL,
+  `payment_time` timestamp NOT NULL DEFAULT current_timestamp(),
+  `payment_status` enum('Thành công','Thất bại','Đang xử lý') NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`payment_id`),
+  KEY `booking_id` (`booking_id`),
+  KEY `payment_method_id` (`payment_method_id`),
+  CONSTRAINT `paymenthistory_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `booking` (`booking_id`),
+  CONSTRAINT `paymenthistory_ibfk_2` FOREIGN KEY (`payment_method_id`) REFERENCES `paymentmethod` (`payment_method_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `paymentmethod`
+--
+
+DROP TABLE IF EXISTS `paymentmethod`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `paymentmethod` (
+  `payment_method_id` int(11) NOT NULL AUTO_INCREMENT,
+  `method_name` varchar(50) NOT NULL,
+  `description` text DEFAULT NULL,
+  `is_active` tinyint(1) DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`payment_method_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `promotion`
+--
+
+DROP TABLE IF EXISTS `promotion`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `promotion` (
+  `promotion_id` int(11) NOT NULL AUTO_INCREMENT,
+  `promotion_name` varchar(100) NOT NULL,
+  `description` text DEFAULT NULL,
+  `discount_amount` decimal(10,2) DEFAULT NULL,
+  `discount_percentage` decimal(5,2) DEFAULT NULL,
+  `start_date` date NOT NULL,
+  `end_date` date NOT NULL,
+  `promotion_code` varchar(20) DEFAULT NULL,
+  `min_purchase` decimal(10,2) DEFAULT NULL,
+  `max_discount` decimal(10,2) DEFAULT NULL,
+  `is_active` tinyint(1) DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`promotion_id`),
+  UNIQUE KEY `promotion_code` (`promotion_code`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `role`
+--
+
+DROP TABLE IF EXISTS `role`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `role` (
+  `role_id` int(11) NOT NULL AUTO_INCREMENT,
+  `role_name` varchar(20) NOT NULL,
+  `description` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`role_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `seat`
+--
+
+DROP TABLE IF EXISTS `seat`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `seat` (
+  `seat_id` int(11) NOT NULL AUTO_INCREMENT,
+  `room_id` int(11) NOT NULL,
+  `seat_row` char(1) NOT NULL,
+  `seat_number` int(11) NOT NULL,
+  `seat_type` varchar(20) NOT NULL,
+  `is_available` tinyint(1) DEFAULT 1,
+  `is_active` tinyint(1) DEFAULT 1,
+  `is_merged` tinyint(1) DEFAULT 0,
+  `merged_with_seat_id` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`seat_id`),
+  UNIQUE KEY `room_id` (`room_id`,`seat_row`,`seat_number`),
+  KEY `merged_with_seat_id` (`merged_with_seat_id`),
+  CONSTRAINT `seat_ibfk_1` FOREIGN KEY (`room_id`) REFERENCES `theaterroom` (`room_id`),
+  CONSTRAINT `seat_ibfk_2` FOREIGN KEY (`merged_with_seat_id`) REFERENCES `seat` (`seat_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=166 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `seatchangehistory`
+--
+
+DROP TABLE IF EXISTS `seatchangehistory`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `seatchangehistory` (
+  `history_id` int(11) NOT NULL AUTO_INCREMENT,
+  `seat_id` int(11) NOT NULL,
+  `room_id` int(11) NOT NULL,
+  `changed_by` int(11) NOT NULL,
+  `previous_state` varchar(255) DEFAULT NULL,
+  `current_state` varchar(255) DEFAULT NULL,
+  `change_reason` text DEFAULT NULL,
+  `changed_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`history_id`),
+  KEY `seat_id` (`seat_id`),
+  KEY `room_id` (`room_id`),
+  KEY `changed_by` (`changed_by`),
+  CONSTRAINT `seatchangehistory_ibfk_1` FOREIGN KEY (`seat_id`) REFERENCES `seat` (`seat_id`),
+  CONSTRAINT `seatchangehistory_ibfk_2` FOREIGN KEY (`room_id`) REFERENCES `theaterroom` (`room_id`),
+  CONSTRAINT `seatchangehistory_ibfk_3` FOREIGN KEY (`changed_by`) REFERENCES `user` (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `seattemplate`
+--
+
+DROP TABLE IF EXISTS `seattemplate`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `seattemplate` (
+  `template_id` int(11) NOT NULL AUTO_INCREMENT,
+  `template_name` varchar(100) NOT NULL,
+  `description` text DEFAULT NULL,
+  `total_rows` int(11) NOT NULL,
+  `seats_per_row` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`template_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `showtime`
+--
+
+DROP TABLE IF EXISTS `showtime`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `showtime` (
+  `showtime_id` int(11) NOT NULL AUTO_INCREMENT,
+  `movie_id` int(11) NOT NULL,
+  `room_id` int(11) NOT NULL,
+  `start_time` datetime NOT NULL,
+  `end_time` datetime NOT NULL,
+  `price` decimal(10,2) NOT NULL,
+  `is_active` tinyint(1) DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`showtime_id`),
+  KEY `movie_id` (`movie_id`),
+  KEY `room_id` (`room_id`),
+  CONSTRAINT `showtime_ibfk_1` FOREIGN KEY (`movie_id`) REFERENCES `movie` (`movie_id`),
+  CONSTRAINT `showtime_ibfk_2` FOREIGN KEY (`room_id`) REFERENCES `theaterroom` (`room_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `theaterroom`
+--
+
+DROP TABLE IF EXISTS `theaterroom`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `theaterroom` (
+  `room_id` int(11) NOT NULL AUTO_INCREMENT,
+  `cinema_complex_id` int(11) NOT NULL,
+  `template_id` int(11) DEFAULT NULL,
+  `room_name` varchar(50) NOT NULL,
+  `room_type` varchar(20) NOT NULL,
+  `capacity` int(11) NOT NULL,
+  `is_active` tinyint(1) DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`room_id`),
+  KEY `cinema_complex_id` (`cinema_complex_id`),
+  KEY `template_id` (`template_id`),
+  CONSTRAINT `theaterroom_ibfk_1` FOREIGN KEY (`cinema_complex_id`) REFERENCES `cinemacomplex` (`cinema_complex_id`),
+  CONSTRAINT `theaterroom_ibfk_2` FOREIGN KEY (`template_id`) REFERENCES `seattemplate` (`template_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `tickettype`
+--
+
+DROP TABLE IF EXISTS `tickettype`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `tickettype` (
+  `ticket_type_id` int(11) NOT NULL AUTO_INCREMENT,
+  `type_name` varchar(50) NOT NULL,
+  `description` text DEFAULT NULL,
+  `discount_percentage` decimal(5,2) DEFAULT 0.00,
+  `is_active` tinyint(1) DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`ticket_type_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `user`
+--
+
+DROP TABLE IF EXISTS `user`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `user` (
+  `user_id` int(11) NOT NULL AUTO_INCREMENT,
+  `role_id` int(11) NOT NULL,
+  `username` varchar(50) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `full_name` varchar(100) NOT NULL,
+  `phone_number` varchar(15) DEFAULT NULL,
+  `date_of_birth` date DEFAULT NULL,
+  `profile_image` varchar(255) DEFAULT NULL,
+  `is_active` tinyint(1) DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`user_id`),
+  UNIQUE KEY `username` (`username`),
+  UNIQUE KEY `email` (`email`),
+  KEY `role_id` (`role_id`),
+  CONSTRAINT `user_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `role` (`role_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `userpromotion`
+--
+
+DROP TABLE IF EXISTS `userpromotion`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `userpromotion` (
+  `user_id` int(11) NOT NULL,
+  `promotion_id` int(11) NOT NULL,
+  `is_used` tinyint(1) DEFAULT 0,
+  `used_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`user_id`,`promotion_id`),
+  KEY `promotion_id` (`promotion_id`),
+  CONSTRAINT `userpromotion_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`),
+  CONSTRAINT `userpromotion_ibfk_2` FOREIGN KEY (`promotion_id`) REFERENCES `promotion` (`promotion_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2025-03-11 22:39:46
