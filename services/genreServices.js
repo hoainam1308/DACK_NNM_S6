@@ -65,7 +65,7 @@ const deleteGenre = async (id) => {
         const updatedGenre = await Genre.findByIdAndUpdate(
             id,
             {
-                isDelete: true,
+                isDeleted: true,
                 updatedAt: new Date()
             },
             { new: true }
