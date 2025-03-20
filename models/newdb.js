@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+const bcrypt = require('bcryptjs');
 // ------------------ TẠO CÁC SCHEMA ------------------
 
 // Schema cho Role (Vai trò người dùng)
@@ -20,6 +20,12 @@ const userSchema = new mongoose.Schema({
     profileImage: { type: String },
     isActive: { type: Boolean, default: true }
 }, { timestamps: true });
+userSchema.pre('save', async function(next) {
+    if (this.isModified('password')) {
+        this.password = await bcrypt.hash(this.password, 8);
+    }
+    next();
+});
 
 // Schema cho CinemaComplex (Cụm rạp)
 const cinemaComplexSchema = new mongoose.Schema({
