@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs');
 const login = async (req, res) => {
     try {
         const { email, password } = req.body;
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email }).populate('role');
 
         if (!user) {
             return res.status(401).json({ error: 'Email hoặc mật khẩu không đúng.' });
@@ -16,7 +16,6 @@ const login = async (req, res) => {
         if (!isMatch) {
             return res.status(401).json({ error: 'Email hoặc mật khẩu không đúng.' });
         }
-        console.log("JWT_SECRET:", process.env.JWT_SECRET);
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
         res.json({ user, token });
     } catch (error) {

@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { User } = require('../models/newdb');
+const { getRoleById } = require('../services/roleServices');
 
 const auth = async (req, res, next) => {
     try {
@@ -18,4 +19,21 @@ const auth = async (req, res, next) => {
     }
 };
 
-module.exports = auth;
+// Middleware kiểm tra vai trò
+const authorize = (roles = []) => {
+    return async (req, res, next) => {
+        try {
+            const role = await getRoleById(req.user.role); 
+            console.log(role);
+
+            if (!roles.includes(role.roleName)) {
+                return res.status(403).json({ error: 'Bạn không có quyền truy cập!' });
+            }
+
+            next();
+        } catch (error) {
+            res.status(500).json({ error: 'Lỗi khi kiểm tra quyền hạn!' });
+        }
+    };
+};
+module.exports = { auth, authorize };
