@@ -1,7 +1,9 @@
 const express = require('express')
 const mongoose = require('mongoose');
+const auth = require('./middlewares/auth');
 const app = express()
 const port = 3000
+require('dotenv').config();
 
 app.use(express.json())
 
@@ -9,7 +11,8 @@ app.use(express.json())
 app.use('/api/seats', require('./routes/seatRoutes'));
 app.use('/api/genres', require('./routes/genreRoutes'));
 app.use('/api/movies', require('./routes/movieRoutes'));
-
+app.use('/auth', require('./routes/authRoutes'));
+app.use('/users', require('./routes/userRouters'));
 // Kết nối MongoDB với cơ sở dữ liệu QLDV
 mongoose.connect('mongodb://127.0.0.1:27017/cinema_db')
     .then(() => {
@@ -19,10 +22,10 @@ mongoose.connect('mongodb://127.0.0.1:27017/cinema_db')
     });
 
 // Route gốc
-app.get('/', (req, res) => {
+app.get('/api/protected',auth, (req, res) => {
     res.send('Hệ thống quản lý đặt vé xem phim');
 });
 
 app.listen(port, () => {
   console.log(`App đang chạy tại http://localhost:${port}`)
-})
+}) 
