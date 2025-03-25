@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
-const { User } = require('../models/newdb');
+const User = require('../schemas/user');
 const bcrypt = require('bcryptjs');
+const { CreateSuccessResponseWithMessage, CreateErrorResponse, CreateSuccessResponse, CreateSuccessResponseMessage } = require('../utils/responseHandler');
 
 const login = async (req, res) => {
     try {
@@ -8,18 +9,18 @@ const login = async (req, res) => {
         const user = await User.findOne({ email }).populate('role');
 
         if (!user) {
-            return res.status(401).json({ error: 'Email hoặc mật khẩu không đúng.' });
+            CreateErrorResponse(res, 401, 'Email hoặc mật khẩu không đúng.');
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) {
-            return res.status(401).json({ error: 'Email hoặc mật khẩu không đúng.' });
+            CreateErrorResponse(res, 401, 'Email hoặc mật khẩu không đúng.');
         }
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.json({ user, token });
+        CreateSuccessResponseWithMessage(res, 200, 'Đăng nhập thành công', { user, token });
     } catch (error) {
-        res.status(500).json({ error: 'Lỗi server.' });
+        CreateErrorResponse(res, 400, 'Lỗi đăng nhập.');
     }
 };
 
@@ -30,9 +31,9 @@ const register = async (req, res) => {
         await user.save();
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.status(201).json({ user, token });
+        CreateSuccessResponseWithMessage(res, 201, 'Đăng ký thành công', { user, token });
     } catch (error) {
-        res.status(400).json({ error: 'Lỗi đăng ký.' });
+        CreateErrorResponse(res, 400, 'Lỗi đăng ký.');
     }
 };
 

@@ -1,5 +1,4 @@
-const mongoose = require('mongoose');
-const { Movie } = require('../models/newdb');
+const Movie = require('../schemas/movie');
 
 // Create a new movie
 const createMovie = async (movieData) => {
