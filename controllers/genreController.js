@@ -1,20 +1,14 @@
 const genreService = require('../services/genreServices');
+const { CreateSuccessResponse, CreateErrorResponse, CreateSuccessResponseWithMessage, CreateSuccessResponseMessage } = require('../utils/responseHandler');
 
 // Create new genre
 const createGenre = async (req, res) => {
     try {
         const genreData = req.body;
         const newGenre = await genreService.createGenre(genreData);
-        res.status(201).json({
-            success: true,
-            message: 'Genre created successfully',
-            data: newGenre
-        });
+        CreateSuccessResponseWithMessage(res, 201, 'Genre created successfully', newGenre);
     } catch (error) {
-        res.status(400).json({
-            success: false,
-            message: error.message
-        });
+        CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -22,15 +16,9 @@ const createGenre = async (req, res) => {
 const getAllGenres = async (req, res) => {
     try {
         const genres = await genreService.getAllGenres();
-        res.status(200).json({
-            success: true,
-            data: genres
-        });
+        CreateSuccessResponse(res, 200, genres);
     } catch (error) {
-        res.status(400).json({
-            success: false,
-            message: error.message
-        });
+        CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -39,20 +27,11 @@ const getGenreById = async (req, res) => {
     try {
         const genre = await genreService.getGenreById(req.params.id);
         if (!genre) {
-            return res.status(404).json({
-                success: false,
-                message: 'Genre not found'
-            });
+            CreateErrorResponse(res, 404, 'Genre not found');
         }
-        res.status(200).json({
-            success: true,
-            data: genre
-        });
+        CreateSuccessResponse(res, 200, genre);
     } catch (error) {
-        res.status(400).json({
-            success: false,
-            message: error.message
-        });
+        CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -63,16 +42,9 @@ const updateGenre = async (req, res) => {
             req.params.id,
             req.body
         );
-        res.status(200).json({
-            success: true,
-            message: 'Genre updated successfully',
-            data: updatedGenre
-        });
+        CreateSuccessResponseWithMessage(res, 200, 'Genre updated successfully', updatedGenre);
     } catch (error) {
-        res.status(400).json({
-            success: false,
-            message: error.message
-        });
+        CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -80,15 +52,9 @@ const updateGenre = async (req, res) => {
 const deleteGenre = async (req, res) => {
     try {
         await genreService.deleteGenre(req.params.id);
-        res.status(200).json({
-            success: true,
-            message: 'Genre deleted successfully'
-        });
+        CreateSuccessResponseMessage(res, 200, 'Genre deleted successfully');
     } catch (error) {
-        res.status(400).json({
-            success: false,
-            message: error.message
-        });
+        CreateErrorResponse(res, 400, error.message);
     }
 };
 

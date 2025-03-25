@@ -1,20 +1,14 @@
 const movieService = require('../services/movieServices');
+const { CreateSuccessResponse, CreateErrorResponse, CreateSuccessResponseMessage, CreateSuccessResponseWithMessage } = require('../utils/responseHandler');
 
 // Create new movie
 const createMovie = async (req, res) => {
     try {
         const movieData = req.body;
         const newMovie = await movieService.createMovie(movieData);
-        res.status(201).json({
-            success: true,
-            message: 'Movie created successfully',
-            data: newMovie
-        });
+        CreateSuccessResponse(res, 201, newMovie);
     } catch (error) {
-        res.status(400).json({
-            success: false,
-            message: error.message
-        });
+        CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -23,15 +17,9 @@ const getAllMovies = async (req, res) => {
     try {
         const includeInactive = req.query.includeInactive === 'true';
         const movies = await movieService.getAllMovies(includeInactive);
-        res.status(200).json({
-            success: true,
-            data: movies
-        });
+        CreateSuccessResponse(res, 200, movies);
     } catch (error) {
-        res.status(400).json({
-            success: false,
-            message: error.message
-        });
+        CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -40,20 +28,11 @@ const getMovieById = async (req, res) => {
     try {
         const movie = await movieService.getMovieById(req.params.id);
         if (!movie) {
-            return res.status(404).json({
-                success: false,
-                message: 'Movie not found'
-            });
+            CreateErrorResponse(res, 404, 'Movie not found');
         }
-        res.status(200).json({
-            success: true,
-            data: movie
-        });
+        CreateSuccessResponse(res, 200, movie);
     } catch (error) {
-        res.status(400).json({
-            success: false,
-            message: error.message
-        });
+        CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -61,15 +40,9 @@ const getMovieById = async (req, res) => {
 const getMoviesByGenre = async (req, res) => {
     try {
         const movies = await movieService.getMoviesByGenre(req.params.genreId);
-        res.status(200).json({
-            success: true,
-            data: movies
-        });
+        CreateSuccessResponse(res, 200, movies);
     } catch (error) {
-        res.status(400).json({
-            success: false,
-            message: error.message
-        });
+        CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -80,16 +53,9 @@ const updateMovie = async (req, res) => {
             req.params.id,
             req.body
         );
-        res.status(200).json({
-            success: true,
-            message: 'Movie updated successfully',
-            data: updatedMovie
-        });
+        CreateSuccessResponseWithMessage(res, 200, 'Movie updated successfully', updatedMovie);
     } catch (error) {
-        res.status(400).json({
-            success: false,
-            message: error.message
-        });
+        CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -97,15 +63,9 @@ const updateMovie = async (req, res) => {
 const deleteMovie = async (req, res) => {
     try {
         await movieService.deleteMovie(req.params.id);
-        res.status(200).json({
-            success: true,
-            message: 'Movie deleted successfully'
-        });
+        CreateSuccessResponseMessage(res, 200, 'Movie deleted successfully');
     } catch (error) {
-        res.status(400).json({
-            success: false,
-            message: error.message
-        });
+        CreateErrorResponse(res, 400, error.message);
     }
 };
 

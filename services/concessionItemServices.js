@@ -1,5 +1,4 @@
-const mongoose = require('mongoose');
-const { ConcessionItem } = require('../models/newdb');
+const ConcessionItem = require('../schemas/concessionItem');
 
 // Create a new concession item
 const createConcessionItem = async (itemData) => {

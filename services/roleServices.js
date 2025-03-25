@@ -1,4 +1,4 @@
-const { Role } = require('../models/newdb');
+const Role = require('../schemas/role');
 
 // Create a new role
 const createRole = async (roleData) => {

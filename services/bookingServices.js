@@ -1,10 +1,7 @@
 const mongoose = require('mongoose');
-const {
-    Booking,
-    BookingDetail,
-    BookingConcession
-} = require('../models/newdb');
-
+const Booking = require('../schemas/booking');
+const BookingDetail = require('../schemas/bookingDetail');
+const BookingConcession = require('../schemas/bookingConcession');
 
 const createBooking = async (bookingData) => {
     const session = await mongoose.startSession();
@@ -53,6 +50,11 @@ const createBooking = async (bookingData) => {
     }
 };
 
+const getAllBookings = async () => {
+    return await Booking.find()
+        .populate('userId')
+}
+
 const getBookingById = async (bookingId) => {
     return await Booking.findById(bookingId)
         .populate('userId')
@@ -63,6 +65,11 @@ const getBookingById = async (bookingId) => {
             }
         });
 };
+
+const getBookingByUserId = async (userId) => {
+    return await Booking.find({ userId: userId })
+        .populate('userId')
+}
 
 const updateBookingStatus = async (bookingId, status) => {
     try {
@@ -100,6 +107,8 @@ const updateBookingStatus = async (bookingId, status) => {
 // Update the exports
 module.exports = {
     createBooking,
+    getAllBookings,
     getBookingById,
+    getBookingByUserId,
     updateBookingStatus
 };

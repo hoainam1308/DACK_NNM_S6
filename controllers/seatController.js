@@ -5,8 +5,8 @@ const {
     mergeSeats, 
     resetSeat 
 } = require('../services/seatServices');
-const { TheaterRoom, Seat } = require('../models/newdb');
-
+const Seat = require('../schemas/seat');
+const TheaterRoom = require('../schemas/theaterRoom');
 /**
  * Controller để tạo ghế cho một phòng chiếu dựa trên mẫu ghế
  * @param {Object} req - Request object

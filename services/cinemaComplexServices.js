@@ -1,6 +1,4 @@
-const mongoose = require('mongoose');
-const { CinemaComplex } = require('../models/newdb');
-
+const CinemaComplex = require('../schemas/cinemaComplex');
 // Create a new cinema complex
 const createCinemaComplex = async (cinemaComplexData) => {
     try {

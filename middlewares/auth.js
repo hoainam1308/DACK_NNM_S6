@@ -1,8 +1,8 @@
 const jwt = require('jsonwebtoken');
-const { User } = require('../models/newdb');
+const User = require('../schemas/user');
 const { getRoleById } = require('../services/roleServices');
 
-const auth = async (req, res, next) => {
+const authenticase = async (req, res, next) => {
     try {
         const token = req.header('Authorization').replace('Bearer ', '');
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -36,4 +36,4 @@ const authorize = (roles = []) => {
         }
     };
 };
-module.exports = { auth, authorize };
+module.exports = { authenticase, authorize };

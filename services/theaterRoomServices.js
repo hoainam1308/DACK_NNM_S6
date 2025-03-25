@@ -1,5 +1,4 @@
-const mongoose = require('mongoose');
-const { TheaterRoom } = require('../models/newdb');
+const TheaterRoom = require('../schemas/theaterRoom');
 
 // Create a new theater room
 const createTheaterRoom = async (theaterRoomData) => {

@@ -1,4 +1,4 @@
-const { Genre } = require('../models/newdb');
+const Genre = require('../schemas/genre');
 
 // Create a new genre
 const createGenre = async (genreData) => {

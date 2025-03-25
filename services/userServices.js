@@ -1,4 +1,4 @@
-const { User } = require('../models/newdb');
+const User = require('../schemas/user');
 
 const getAllUsers = async () => {
     try {

@@ -1,10 +1,8 @@
 const mongoose = require('mongoose');
-const { 
-    Seat, 
-    SeatChangeHistory, 
-    TheaterRoom, 
-    SeatTemplate 
-} = require('../models/newdb');
+const Seat = require('../schemas/seat');
+const SeatChangeHistory = require('../schemas/seatChangeHistory');
+const SeatTemplate = require('../schemas/seatTemplate');
+const TheaterRoom = require('../schemas/theaterRoom');
 
 /**
  * Thay thế cho procedure ChangeSeatType
@@ -330,6 +328,7 @@ async function resetSeat(roomId, rowLetter, seatNum, userId) {
     } finally {
         session.endSession();
     }
+    
 }
 
 module.exports = {

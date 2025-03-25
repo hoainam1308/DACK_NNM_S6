@@ -1,10 +1,9 @@
-const mongoose = require('mongoose');
-const { MovieShowtime } = require('../models/newdb');
+const Showtime = require('../schemas/showtime');
 
 // Create a new showtime
 const createShowtime = async (showtimeData) => {
     try {
-        const newShowtime = new MovieShowtime({
+        const newShowtime = new Showtime({
             movieId: showtimeData.movieId,
             theaterRoomId: showtimeData.theaterRoomId,
             startTime: showtimeData.startTime,
@@ -24,12 +23,12 @@ const createShowtime = async (showtimeData) => {
 const getAllShowtimes = async (includeInactive = false) => {
     try {
         const query = includeInactive ? {} : { isActive: true };
-        return await MovieShowtime.find(query)
-            .populate('movieId')
+        return await Showtime.find(query)
+            .populate('movie')
             .populate({
-                path: 'theaterRoomId',
+                path: 'room',
                 populate: {
-                    path: 'cinemaComplexId'
+                    path: 'cinemaComplex'
                 }
             })
             .sort({ startTime: 1 });
@@ -41,12 +40,12 @@ const getAllShowtimes = async (includeInactive = false) => {
 // Get showtime by ID
 const getShowtimeById = async (id) => {
     try {
-        const showtime = await MovieShowtime.findById(id)
-            .populate('movieId')
+        const showtime = await Showtime.findById(id)
+            .populate('movie')
             .populate({
-                path: 'theaterRoomId',
+                path: 'room',
                 populate: {
-                    path: 'cinemaComplexId'
+                    path: 'cinemaComplex'
                 }
             });
         if (!showtime) {
@@ -61,17 +60,17 @@ const getShowtimeById = async (id) => {
 // Get showtimes by movie
 const getShowtimesByMovie = async (movieId) => {
     try {
-        return await MovieShowtime.find({
+        return await Showtime.find({
             movieId: movieId,
             isActive: true,
             startTime: { $gt: new Date() }
         })
-        .populate('movieId')
-        .populate({
-            path: 'theaterRoomId',
-            populate: {
-                path: 'cinemaComplexId'
-            }
+        .populate('movie')
+            .populate({
+                path: 'room',
+                populate: {
+                    path: 'cinemaComplex'
+                }
         })
         .sort({ startTime: 1 });
     } catch (error) {
@@ -82,16 +81,16 @@ const getShowtimesByMovie = async (movieId) => {
 // Get showtimes by theater room
 const getShowtimesByTheaterRoom = async (theaterRoomId) => {
     try {
-        return await MovieShowtime.find({
+        return await Showtime.find({
             theaterRoomId: theaterRoomId,
             isActive: true,
             startTime: { $gt: new Date() }
         })
-        .populate('movieId')
+        .populate('movie')
         .populate({
-            path: 'theaterRoomId',
+            path: 'room',
             populate: {
-                path: 'cinemaComplexId'
+                path: 'cinemaComplex'
             }
         })
         .sort({ startTime: 1 });
@@ -100,10 +99,31 @@ const getShowtimesByTheaterRoom = async (theaterRoomId) => {
     }
 };
 
+// Get showtimes by cinema complex
+const getShowtimesByCinemaComplex = async (cinemaComplexId) => {
+    try {
+        return await Showtime.find({
+            'room.cinemaComplex': cinemaComplexId,
+            isActive: true,
+            startTime: { $gt: new Date() }
+        })
+        .populate('movie')
+        .populate({
+            path: 'room',
+            populate: {
+                path: 'cinemaComplex'
+            }
+        })
+        .sort({ startTime: 1 });
+    } catch (error) {
+        throw error;
+    }
+}
+
 // Update showtime
 const updateShowtime = async (id, updateData) => {
     try {
-        const updatedShowtime = await MovieShowtime.findByIdAndUpdate(
+        const updatedShowtime = await Showtime.findByIdAndUpdate(
             id,
             {
                 ...updateData,
@@ -111,11 +131,11 @@ const updateShowtime = async (id, updateData) => {
             },
             { new: true }
         )
-        .populate('movieId')
+        .populate('movie')
         .populate({
-            path: 'theaterRoomId',
+            path: 'room',
             populate: {
-                path: 'cinemaComplexId'
+                path: 'cinemaComplex'
             }
         });
         
@@ -132,7 +152,7 @@ const updateShowtime = async (id, updateData) => {
 // Delete showtime (soft delete)
 const deleteShowtime = async (id) => {
     try {
-        const updatedShowtime = await MovieShowtime.findByIdAndUpdate(
+        const updatedShowtime = await Showtime.findByIdAndUpdate(
             id,
             {
                 isActive: false,
@@ -140,11 +160,11 @@ const deleteShowtime = async (id) => {
             },
             { new: true }
         )
-        .populate('movieId')
+        .populate('movie')
         .populate({
-            path: 'theaterRoomId',
+            path: 'room',
             populate: {
-                path: 'cinemaComplexId'
+                path: 'cinemaComplex'
             }
         });
 
@@ -164,6 +184,7 @@ module.exports = {
     getShowtimeById,
     getShowtimesByMovie,
     getShowtimesByTheaterRoom,
+    getShowtimesByCinemaComplex,
     updateShowtime,
     deleteShowtime
 };
