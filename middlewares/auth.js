@@ -24,8 +24,6 @@ const authorize = (roles = []) => {
     return async (req, res, next) => {
         try {
             const role = await getRoleById(req.user.role); 
-            console.log(role);
-
             if (!roles.includes(role.roleName)) {
                 return res.status(403).json({ error: 'Bạn không có quyền truy cập!' });
             }

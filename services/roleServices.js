@@ -24,6 +24,20 @@ const getAllRoles = async () => {
     }
 };
 
+//Get role by name
+const getRoleByName = async (roleName) => {
+    try {
+        const role = await Role.findOne({ roleName: roleName });
+        if (!role) {
+            throw new Error('Role not found');
+        }
+        return role;
+    }
+    catch (error) {
+        throw error;
+    }
+};
+
 // Get role complex by ID
 const getRoleById = async (id) => {
     try {
@@ -37,8 +51,11 @@ const getRoleById = async (id) => {
     }
 };
 
+
+
 module.exports = {
     createRole,
     getAllRoles,
+    getRoleByName,
     getRoleById
 };

@@ -1,7 +1,13 @@
 const jwt = require('jsonwebtoken');
 const User = require('../schemas/user');
+const roleServices = require('../services/roleServices');
 const bcrypt = require('bcryptjs');
+const {OAuth2Client} = require('google-auth-library');
+const client_id = process.env.GOOGLE_CLIENT_ID;
+const client = new OAuth2Client(client_id);
+
 const { CreateSuccessResponseWithMessage, CreateErrorResponse, CreateSuccessResponse, CreateSuccessResponseMessage } = require('../utils/responseHandler');
+const role = require('../schemas/role');
 
 const login = async (req, res) => {
     try {
@@ -37,4 +43,38 @@ const register = async (req, res) => {
     }
 };
 
-module.exports = { login, register };
+const verifyGoogleToken = async (token) => {
+    const ticket = await client.verifyIdToken({
+        idToken: token,
+        audience: client_id
+    });
+    const payload = ticket.getPayload();
+    return payload;
+};
+
+const googleLogin = async (req, res) => {
+    const { token } = req.body;
+    const payload = await verifyGoogleToken(token);
+    const {email, name, sub} = payload;
+    const user = await User.findOne({ email }).populate('role');
+    if (!user) {
+        const role = await roleServices.getRoleByName('Customer');
+        const newUser = new User({
+            username: email,
+            email,
+            fullName: name,
+            role: role._id
+        });
+        await newUser.save();
+        const jwtToken = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        CreateSuccessResponseWithMessage(res, 201, 'Đăng ký thành công', { user: newUser, jwtToken });
+    } else {
+        const jwtToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        CreateSuccessResponseWithMessage(res, 200, 'Đăng nhập thành công', { user, jwtToken });
+    }
+};
+
+
+
+
+module.exports = { login, register, googleLogin };
