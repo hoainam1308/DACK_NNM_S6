@@ -6,9 +6,9 @@ const createMovie = async (req, res) => {
     try {
         const movieData = req.body;
         const newMovie = await movieService.createMovie(movieData);
-        CreateSuccessResponse(res, 201, newMovie);
+        return CreateSuccessResponse(res, 201, newMovie);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -17,9 +17,9 @@ const getAllMovies = async (req, res) => {
     try {
         const includeInactive = req.query.includeInactive === 'true';
         const movies = await movieService.getAllMovies(includeInactive);
-        CreateSuccessResponse(res, 200, movies);
+        return CreateSuccessResponse(res, 200, movies);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -28,11 +28,11 @@ const getMovieById = async (req, res) => {
     try {
         const movie = await movieService.getMovieById(req.params.id);
         if (!movie) {
-            CreateErrorResponse(res, 404, 'Movie not found');
+            return CreateErrorResponse(res, 404, 'Movie not found');
         }
-        CreateSuccessResponse(res, 200, movie);
+        return CreateSuccessResponse(res, 200, movie);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -40,9 +40,9 @@ const getMovieById = async (req, res) => {
 const getMoviesByGenre = async (req, res) => {
     try {
         const movies = await movieService.getMoviesByGenre(req.params.genreId);
-        CreateSuccessResponse(res, 200, movies);
+        return CreateSuccessResponse(res, 200, movies);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -53,9 +53,9 @@ const updateMovie = async (req, res) => {
             req.params.id,
             req.body
         );
-        CreateSuccessResponseWithMessage(res, 200, 'Movie updated successfully', updatedMovie);
+        return CreateSuccessResponseWithMessage(res, 200, 'Movie updated successfully', updatedMovie);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -63,9 +63,9 @@ const updateMovie = async (req, res) => {
 const deleteMovie = async (req, res) => {
     try {
         await movieService.deleteMovie(req.params.id);
-        CreateSuccessResponseMessage(res, 200, 'Movie deleted successfully');
+        return CreateSuccessResponseMessage(res, 200, 'Movie deleted successfully');
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 

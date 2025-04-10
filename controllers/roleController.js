@@ -6,9 +6,9 @@ const createRole = async (req, res) => {
     try {
         const roleData = req.body;
         const newRole = await roleService.createRole(roleData);
-       CreateSuccessResponseWithMessage(res, 201, 'Role created successfully', newRole);
+        return CreateSuccessResponseWithMessage(res, 201, 'Role created successfully', newRole);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -16,9 +16,9 @@ const createRole = async (req, res) => {
 const getAllRoles = async (req, res) => {
     try {
         const roles = await roleService.getAllRoles();
-        CreateSuccessResponse(res, 200, roles);
+        return CreateSuccessResponse(res, 200, roles);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -27,11 +27,11 @@ const getRoleById = async (req, res) => {
     try {
         const role = await roleService.getRoleById(req.params.id);
         if (!role) {
-            CreateErrorResponse(res, 404, 'Role not found');
+            return CreateErrorResponse(res, 404, 'Role not found');
         }
-        CreateSuccessResponse(res, 200, role);
+        return CreateSuccessResponse(res, 200, role);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 

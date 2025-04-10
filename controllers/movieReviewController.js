@@ -6,9 +6,9 @@ const createMovieReview = async (req, res) => {
     try {
         const movieReviewData = req.body;
         const newMovieReview = await movieRevewService.createMovieReview(movieReviewData);
-        CreateSuccessResponseWithMessage(res, 201, 'Movie review created successfully', newMovieReview);
+        return CreateSuccessResponseWithMessage(res, 201, 'Movie review created successfully', newMovieReview);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -16,9 +16,9 @@ const createMovieReview = async (req, res) => {
 const getAllMovieReviews = async (req, res) => {
     try {
         const movieReviews = await movieRevewService.getAllMovieReviews();
-        CreateSuccessResponse(res, 200, movieReviews);
+        return CreateSuccessResponse(res, 200, movieReviews);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -28,9 +28,9 @@ const getMovieReviews = async (req, res) => {
         const movieId = req.params.id;
         const includeHidden = req.query.includeHidden === 'true';
         const reviews = await movieRevewService.getMovieReviews(movieId, includeHidden);
-        CreateSuccessResponse(res, 200, reviews);
+        return CreateSuccessResponse(res, 200, reviews);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -39,9 +39,9 @@ const getReviewById = async (req, res) => {
     try {
         const reviewId = req.params.id;
         const review = await movieRevewService.getReviewById(reviewId);
-        CreateSuccessResponse(res, 200, review);
+        return CreateSuccessResponse(res, 200, review);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -50,9 +50,9 @@ const getUserReviews = async (req, res) => {
     try {
         const userId = req.params.id;
         const reviews = await movieRevewService.getUserReviews(userId);
-        CreateSuccessResponse(res, 200, reviews);
+        return CreateSuccessResponse(res, 200, reviews);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 

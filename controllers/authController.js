@@ -1,12 +1,15 @@
 const jwt = require('jsonwebtoken');
 const User = require('../schemas/user');
 const roleServices = require('../services/roleServices');
+const userServices = require('../services/userServices');
 const bcrypt = require('bcryptjs');
 const {OAuth2Client} = require('google-auth-library');
 const client_id = process.env.GOOGLE_CLIENT_ID;
 const client = new OAuth2Client(client_id);
+const crypto = require('crypto');
+// const mailer = require('../utils/mailer');
 
-const { CreateSuccessResponseWithMessage, CreateErrorResponse, CreateSuccessResponse, CreateSuccessResponseMessage } = require('../utils/responseHandler');
+const { CreateSuccessResponseWithMessage, CreateErrorResponse, CreateSuccessResponse, CreateCookieResponse } = require('../utils/responseHandler');
 const role = require('../schemas/role');
 
 const login = async (req, res) => {
@@ -15,18 +18,22 @@ const login = async (req, res) => {
         const user = await User.findOne({ email }).populate('role');
 
         if (!user) {
-            CreateErrorResponse(res, 401, 'Email hoặc mật khẩu không đúng.');
+            return CreateErrorResponse(res, 401, 'Email hoặc mật khẩu không đúng.');
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) {
-            CreateErrorResponse(res, 401, 'Email hoặc mật khẩu không đúng.');
+            return CreateErrorResponse(res, 401, 'Email hoặc mật khẩu không đúng.');
         }
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        CreateSuccessResponseWithMessage(res, 200, 'Đăng nhập thành công', { user, token });
+        let token = jwt.sign({ 
+            id: user._id 
+        }, process.env.JWT_SECRET, { expiresIn: '1h' })
+        let exp = (new Date(Date.now() + 60 * 60 * 1000)).getTime();
+        CreateCookieResponse(res, 'token', token, exp);
+        return CreateSuccessResponseWithMessage(res, 200, 'Đăng nhập thành công', { user, token });
     } catch (error) {
-        CreateErrorResponse(res, 400, 'Lỗi đăng nhập.');
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -37,9 +44,9 @@ const register = async (req, res) => {
         await user.save();
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        CreateSuccessResponseWithMessage(res, 201, 'Đăng ký thành công', { user, token });
+        return CreateSuccessResponseWithMessage(res, 201, 'Đăng ký thành công', { user, token });
     } catch (error) {
-        CreateErrorResponse(res, 400, 'Lỗi đăng ký.');
+        return CreateErrorResponse(res, 400, 'Lỗi đăng ký.');
     }
 };
 
@@ -66,15 +73,43 @@ const googleLogin = async (req, res) => {
             role: role._id
         });
         await newUser.save();
-        const jwtToken = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        CreateSuccessResponseWithMessage(res, 201, 'Đăng ký thành công', { user: newUser, jwtToken });
+        const jwtToken = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: '2m' });
+        return CreateSuccessResponseWithMessage(res, 201, 'Đăng ký thành công', { user: newUser, jwtToken });
     } else {
         const jwtToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        CreateSuccessResponseWithMessage(res, 200, 'Đăng nhập thành công', { user, jwtToken });
+        return CreateSuccessResponseWithMessage(res, 200, 'Đăng nhập thành công', { user, jwtToken });
     }
 };
 
+const forgotPassword = async (req, res, next) => {
+    try {
+        const { email } = req.body;
+        const user = await User.findOne({ email });
+        if (!user) {
+            return CreateErrorResponse(res, 404, 'Email không tồn tại.');
+        }
+        user.resetPasswordToken = crypto.randomBytes(32).toString('hex');
+        user.resetPasswordTokenExp = (new Date(Date.now() + 10 * 60 * 1000));
+        await user.save();
+        const url = `http://localhost:3000/auth/resetpassword/${user.resetPasswordToken}`;
+        // await mailer.sendMailForgotPassword(user.email, url);
+        CreateSuccessResponse(res, 200, url);
+    }
+    catch (error) {
+        return CreateErrorResponse(res, 500, error.message);
+    }
+}
+
+const resetPassword = async (req, res, next) => {
+    const  token = req.params.token;
+    const { password } = req.body;
+    const user = await userServices.getUserByToken(token);
+    user.password = password;
+    user.resetPasswordToken = null;
+    user.resetPasswordTokenExp = null;
+    await user.save();
+    return CreateSuccessResponse(res, 200, user);
+}
 
 
-
-module.exports = { login, register, googleLogin };
+module.exports = { login, register, googleLogin, forgotPassword, resetPassword };

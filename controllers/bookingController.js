@@ -6,9 +6,9 @@ const createBooking = async (req, res) => {
     try {
         const bookingData = req.body;
         const newBooking = await bookingService.createBooking(bookingData);
-        CreateSuccessResponseWithMessage(res, 201, 'Booking created successfully', newBooking);
+        return CreateSuccessResponseWithMessage(res, 201, 'Booking created successfully', newBooking);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -16,9 +16,9 @@ const createBooking = async (req, res) => {
 const getAllBookings = async (req, res) => {
     try {
         const bookings = await bookingService.getAllBookings();
-        CreateSuccessResponse(res, 200, bookings);
+        return CreateSuccessResponse(res, 200, bookings);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -27,11 +27,11 @@ const getBookingById = async (req, res) => {
     try {
         const booking = await bookingService.getBookingById(req.params.id);
         if (!booking) {
-           CreateErrorResponse(res, 404, 'Booking not found');
+            return CreateErrorResponse(res, 404, 'Booking not found');
         }
-        CreateSuccessResponse(res, 200, booking);
+        return CreateSuccessResponse(res, 200, booking);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -40,11 +40,11 @@ const getBookingByUserId = async (req, res) => {
     try {
         const booking = await bookingService.getBookingByUserId(req.params.id);
         if (!booking) {
-            CreateErrorResponse(res, 404, 'Booking not found');
+            return CreateErrorResponse(res, 404, 'Booking not found');
         }
-        CreateSuccessResponse(res, 200, booking);
+        return CreateSuccessResponse(res, 200, booking);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -52,9 +52,9 @@ const getBookingByUserId = async (req, res) => {
 const updateBookingStatus = async (req, res) => {
     try {
         const updatedBooking = await bookingService.updateBookingStatus(req.params.id, req.body.status);
-        CreateSuccessResponseWithMessage(res, 200, 'Booking status updated successfully', updatedBooking);
+        return CreateSuccessResponseWithMessage(res, 200, 'Booking status updated successfully', updatedBooking);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 

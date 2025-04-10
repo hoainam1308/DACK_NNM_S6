@@ -5,9 +5,9 @@ const { CreateSuccessResponseWithMessage, CreateErrorResponse, CreateSuccessResp
 const createTicketType = async (req, res) => {
     try {
         const ticketType = await ticketTypeService.createTicketType(req.body);
-        CreateSuccessResponseWithMessage(res, 201, 'Ticket type created successfully', ticketType);
+        return CreateSuccessResponseWithMessage(res, 201, 'Ticket type created successfully', ticketType);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -15,9 +15,9 @@ const createTicketType = async (req, res) => {
 const getAllTicketTypes = async (req, res) => {
     try {
         const ticketTypes = await ticketTypeService.getAllTicketTypes();
-        CreateSuccessResponse(res, 200, ticketTypes);
+        return CreateSuccessResponse(res, 200, ticketTypes);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -26,12 +26,12 @@ const getTicketTypeById = async (req, res) => {
     try {
         const ticketType = await ticketTypeService.getTicketTypeById(req.params.id);
         if (ticketType) {
-            CreateErrorResponse(res, 200, ticketType);
+            return CreateErrorResponse(res, 200, ticketType);
         } else {
-            CreateErrorResponse(res, 404, 'Ticket type not found');
+            return CreateErrorResponse(res, 404, 'Ticket type not found');
         }
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -40,12 +40,12 @@ const updateTicketType = async (req, res) => {
     try {
         const ticketType = await ticketTypeService.updateTicketType(req.params.id, req.body);
         if (ticketType) {
-            CreateSuccessResponseWithMessage(res, 200, 'Ticket type updated successfully', ticketType);
+            return CreateSuccessResponseWithMessage(res, 200, 'Ticket type updated successfully', ticketType);
         } else {
-            CreateErrorResponse(res, 404, 'Ticket type not found');
+            return CreateErrorResponse(res, 404, 'Ticket type not found');
         }
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -54,12 +54,12 @@ const deleteTicketType = async (req, res) => {
     try {
         const ticketType = await ticketTypeService.deleteTicketType(req.params.id);
         if (ticketType) {
-            CreateSuccessResponseMessage(res, 200, 'Ticket type deleted successfully');
+            return CreateSuccessResponseMessage(res, 200, 'Ticket type deleted successfully');
         } else {
-            CreateErrorResponse(res, 404, 'Ticket type not found');
+            return CreateErrorResponse(res, 404, 'Ticket type not found');
         }
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 

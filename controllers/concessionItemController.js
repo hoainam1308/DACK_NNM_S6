@@ -6,9 +6,9 @@ const createConcessionItem = async (req, res) => {
     try {
         const concessionItemData = req.body;
         const newConcessionItem = await concesstionItemService.createConcessionItem(concessionItemData);
-        CreateSuccessResponseWithMessage(res, 201, 'Concession item created successfully', newConcessionItem);
+        return CreateSuccessResponseWithMessage(res, 201, 'Concession item created successfully', newConcessionItem);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -16,9 +16,9 @@ const createConcessionItem = async (req, res) => {
 const getAllConcessionItems = async (req, res) => {
     try {
         const concessionItems = await concesstionItemService.getAllConcessionItems();
-        CreateSuccessResponse(res, 200, concessionItems);
+        return CreateSuccessResponse(res, 200, concessionItems);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -27,11 +27,11 @@ const getConcessionItemById = async (req, res) => {
     try {
         const concessionItem = await concesstionItemService.getConcessionItemById(req.params.id);
         if (!concessionItem) {
-            CreateErrorResponse(res, 404, 'Concession item not found');
+            return CreateErrorResponse(res, 404, 'Concession item not found');
         }
         CreateSuccessResponse(res, 200, concessionItem);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -39,9 +39,9 @@ const getConcessionItemById = async (req, res) => {
 const updateConcessionItem = async (req, res) => {
     try {
         const updatedConcessionItem = await concesstionItemService.updateConcessionItem(req.params.id, req.body);
-        CreateSuccessResponseWithMessage(res, 200, 'Concession item updated successfully', updatedConcessionItem);
+        return CreateSuccessResponseWithMessage(res, 200, 'Concession item updated successfully', updatedConcessionItem);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -49,9 +49,9 @@ const updateConcessionItem = async (req, res) => {
 const deleteConcessionItem = async (req, res) => {
     try {
         const concessionItem = await concesstionItemService.deleteConcessionItem(req.params.id);
-        CreateSuccessResponseWithMessage(res, 200, 'Concession item deleted successfully', concessionItem);
+        return CreateSuccessResponseWithMessage(res, 200, 'Concession item deleted successfully', concessionItem);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 
