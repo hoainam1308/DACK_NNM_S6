@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema({
     fullName: { type: String, required: true },
     phoneNumber: { type: String },
     dateOfBirth: { type: Date },
-    profileImage: { type: String },
+    avatarUrl: { type: String },
     isActive: { type: Boolean, default: true },
     resetPasswordToken: String,
     resetPasswordTokenExp: Date,

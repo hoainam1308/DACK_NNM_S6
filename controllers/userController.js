@@ -1,6 +1,13 @@
 const bcrypt = require('bcrypt');
+let path = require('path')
+let FormData = require('form-data')
+let axios = require('axios')
+let fs = require('fs')
+const { avatarDir } = require('../config/uploadPath');
+
+
 const { getAllUsers, getUsersByRole } = require('../services/userServices');
-const { CreateSuccessResponseWithMessage, CreateErrorResponse, CreateSuccessResponse, CreateSuccessResponseMessage } = require('../utils/responseHandler');
+const { CreateErrorResponse, CreateSuccessResponse, CreateSuccessResponseMessage } = require('../utils/responseHandler');
 
 const getAllUsersController = async (req, res) => {
     try {
@@ -46,4 +53,31 @@ const changePassword = async (req, res) => {
     }
 };
 
-module.exports = { getAllUsersController, getUsersByRoleController, changePassword, getMyInformation };
+
+let serverCDN = 'http://localhost:4000/upload';
+
+const changeAvatar = async (req, res) => {
+    try {
+        if (!req.file) {
+            return CreateErrorResponse(res, 400, "Không có file nào được upload.");
+        }
+        let imgPath = path.join(avatarDir, req.file.filename);
+        let newform = new FormData();
+        newform.append('avatar', fs.createReadStream(imgPath))
+        let result = await axios.post(serverCDN, newform, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })
+        fs.unlinkSync(imgPath)
+        // let avatarURL = authURL + req.file.filename;
+        req.user.avatarUrl = result.data.data;
+        await req.user.save()
+        CreateSuccessResponse(res, 200,req.user )
+    } catch (error) {
+        return CreateErrorResponse(res, 400, error.message);
+    }
+}
+
+
+module.exports = { getAllUsersController, getUsersByRoleController, changePassword, getMyInformation, changeAvatar };
