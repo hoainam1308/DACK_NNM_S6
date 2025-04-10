@@ -52,7 +52,7 @@ const createUser = async (userData) => {
             fullName: userData.fullName,
             phoneNumber: userData.phoneNumber,
             dateOfBirth: userData.dateOfBirth,
-            profileImage: userData.profileImage
+            avatarUrl: userData.avatarUrl
         });
         return await newUser.save();
     } catch (error) {

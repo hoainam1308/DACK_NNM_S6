@@ -2,6 +2,7 @@ const express = require('express')
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 require('dotenv').config();
+const cors = require('cors');
 
 const { authenticase, authorize } = require('./middlewares/auth');
 
@@ -11,6 +12,9 @@ const secret_key = process.env.JWT_SECRET;
 
 app.use(express.json())
 app.use(cookieParser(secret_key));
+app.use(cors({
+    origin:'*'
+}))
 // Import routes
 app.use('/api/seats', require('./routes/seatRoutes'));
 app.use('/api/genres', require('./routes/genreRoutes'));
