@@ -5,9 +5,9 @@ const { CreateSuccessResponseWithMessage, CreateErrorResponse, CreateSuccessResp
 const createTheaterRoom = async (req, res) => {
     try {
         const theaterRoom = await theaterRoomService.createTheaterRoom(req.body);
-        CreateSuccessResponseWithMessage(res, 201, 'Theater room created successfully', theaterRoom);
+        return CreateSuccessResponseWithMessage(res, 201, 'Theater room created successfully', theaterRoom);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -15,9 +15,9 @@ const createTheaterRoom = async (req, res) => {
 const getAllTheaterRooms = async (req, res) => {
     try {
         const theaterRooms = await theaterRoomService.getAllTheaterRooms();
-        CreateSuccessResponse(res, 200, theaterRooms);
+        return CreateSuccessResponse(res, 200, theaterRooms);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -26,11 +26,11 @@ const getTheaterRoomById = async (req, res) => {
     try {
         const theaterRoom = await theaterRoomService.getTheaterRoomById(req.params.id);
         if (!theaterRoom) {
-            CreateSuccessResponseMessage(res, 404, 'Theater room not found');
+            return CreateSuccessResponseMessage(res, 404, 'Theater room not found');
         }
-        CreateSuccessResponse(res, 200, theaterRoom);
+        return CreateSuccessResponse(res, 200, theaterRoom);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -38,9 +38,9 @@ const getTheaterRoomById = async (req, res) => {
 const getTheaterRoomsByCinemaComplex = async (req, res) => {
     try {
         const theaterRooms = await theaterRoomService.getTheaterRoomsByCinemaComplex(req.params.cinemaComplexId);
-        CreateSuccessResponse(res, 200, theaterRooms);
+        return CreateSuccessResponse(res, 200, theaterRooms);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -48,9 +48,9 @@ const getTheaterRoomsByCinemaComplex = async (req, res) => {
 const updateTheaterRoom = async (req, res) => {
     try {
         const updatedTheaterRoom = await theaterRoomService.updateTheaterRoom(req.params.id, req.body);
-        CreateSuccessResponseWithMessage(res, 200, 'Theater room updated successfully', updatedTheaterRoom);
+        return CreateSuccessResponseWithMessage(res, 200, 'Theater room updated successfully', updatedTheaterRoom);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -58,9 +58,9 @@ const updateTheaterRoom = async (req, res) => {
 const deleteTheaterRoom = async (req, res) => {
     try {
         const updatedTheaterRoom = await theaterRoomService.deleteTheaterRoom(req.params.id);
-        CreateSuccessResponseWithMessage(res, 200, 'Theater room deleted successfully', updatedTheaterRoom);
+        return CreateSuccessResponseWithMessage(res, 200, 'Theater room deleted successfully', updatedTheaterRoom);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 

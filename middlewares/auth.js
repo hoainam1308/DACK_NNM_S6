@@ -4,14 +4,17 @@ const { getRoleById } = require('../services/roleServices');
 
 const authenticase = async (req, res, next) => {
     try {
-        const token = req.header('Authorization').replace('Bearer ', '');
+        let token;
+        if (!req.headers || !req.headers.authorization) {
+            token = req.signedCookies.token;
+        } else {
+            token = req.header('Authorization').replace('Bearer ', '');
+        }
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const user = await User.findOne({ _id: decoded.id });
-
         if (!user) {
             throw new Error();
         }
-
         req.user = user;
         next();
     } catch (error) {

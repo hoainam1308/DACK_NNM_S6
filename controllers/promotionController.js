@@ -5,9 +5,9 @@ const { CreateSuccessResponse, CreateSuccessResponseWithMessage, CreateErrorResp
 const createPromotion = async (req, res) => {
     try {
         const promotion = await promotionService.createPromotion(req.body);
-        CreateSuccessResponseWithMessage(res, 201, 'Promotion created successfully', promotion);
+        return CreateSuccessResponseWithMessage(res, 201, 'Promotion created successfully', promotion);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -15,9 +15,9 @@ const createPromotion = async (req, res) => {
 const getAllPromotions = async (req, res) => {
     try {
         const promotions = await promotionService.getAllPromotions();
-        CreateSuccessResponse(res, 200, promotions);
+        return CreateSuccessResponse(res, 200, promotions);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -26,11 +26,11 @@ const getPromotionById = async (req, res) => {
     try {
         const promotion = await promotionService.getPromotionById(req.params.id);
         if (!promotion) {
-            CreateErrorResponse(res, 404, 'Promotion not found');
+            return CreateErrorResponse(res, 404, 'Promotion not found');
         }
-        CreateSuccessResponse(res, 200, promotion);
+        return CreateSuccessResponse(res, 200, promotion);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -38,9 +38,9 @@ const getPromotionById = async (req, res) => {
 const updatePromotion = async (req, res) => {
     try {
         const promotion = await promotionService.updatePromotion(req.params.id, req.body);
-        CreateSuccessResponseWithMessage(res, 200, 'Promotion updated successfully', promotion);
+        return CreateSuccessResponseWithMessage(res, 200, 'Promotion updated successfully', promotion);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -48,9 +48,9 @@ const updatePromotion = async (req, res) => {
 const deletePromotion = async (req, res) => {
     try {
         const promotion = await promotionService.deletePromotion(req.params.id);
-        CreateSuccessResponseWithMessage(res, 200, 'Promotion deleted successfully', promotion);
+        return CreateSuccessResponseWithMessage(res, 200, 'Promotion deleted successfully', promotion);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 

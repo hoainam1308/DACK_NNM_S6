@@ -10,7 +10,9 @@ const userSchema = new mongoose.Schema({
     phoneNumber: { type: String },
     dateOfBirth: { type: Date },
     profileImage: { type: String },
-    isActive: { type: Boolean, default: true }
+    isActive: { type: Boolean, default: true },
+    resetPasswordToken: String,
+    resetPasswordTokenExp: Date,
 }, { timestamps: true });
 
 userSchema.pre('save', async function(next) {

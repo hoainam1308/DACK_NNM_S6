@@ -27,4 +27,12 @@ const CreateSuccessResponseMessage = (res, status, message) => {
     });
 }
 
-module.exports = { CreateSuccessResponse, CreateErrorResponse, CreateSuccessResponseWithMessage, CreateSuccessResponseMessage };
+const CreateCookieResponse = (res, key, value, exp) => {
+    res.cookie(key, value, {
+        httpOnly: true,
+        expires: new Date(exp),
+        signed: true
+    });
+}
+
+module.exports = { CreateSuccessResponse, CreateErrorResponse, CreateSuccessResponseWithMessage, CreateSuccessResponseMessage, CreateCookieResponse };

@@ -6,9 +6,9 @@ const createGenre = async (req, res) => {
     try {
         const genreData = req.body;
         const newGenre = await genreService.createGenre(genreData);
-        CreateSuccessResponseWithMessage(res, 201, 'Genre created successfully', newGenre);
+        return CreateSuccessResponseWithMessage(res, 201, 'Genre created successfully', newGenre);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -16,9 +16,9 @@ const createGenre = async (req, res) => {
 const getAllGenres = async (req, res) => {
     try {
         const genres = await genreService.getAllGenres();
-        CreateSuccessResponse(res, 200, genres);
+        return CreateSuccessResponse(res, 200, genres);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -27,11 +27,11 @@ const getGenreById = async (req, res) => {
     try {
         const genre = await genreService.getGenreById(req.params.id);
         if (!genre) {
-            CreateErrorResponse(res, 404, 'Genre not found');
+            return CreateErrorResponse(res, 404, 'Genre not found');
         }
-        CreateSuccessResponse(res, 200, genre);
+        return CreateSuccessResponse(res, 200, genre);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -42,9 +42,9 @@ const updateGenre = async (req, res) => {
             req.params.id,
             req.body
         );
-        CreateSuccessResponseWithMessage(res, 200, 'Genre updated successfully', updatedGenre);
+        return CreateSuccessResponseWithMessage(res, 200, 'Genre updated successfully', updatedGenre);
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 
@@ -52,9 +52,9 @@ const updateGenre = async (req, res) => {
 const deleteGenre = async (req, res) => {
     try {
         await genreService.deleteGenre(req.params.id);
-        CreateSuccessResponseMessage(res, 200, 'Genre deleted successfully');
+        return CreateSuccessResponseMessage(res, 200, 'Genre deleted successfully');
     } catch (error) {
-        CreateErrorResponse(res, 400, error.message);
+        return CreateErrorResponse(res, 400, error.message);
     }
 };
 

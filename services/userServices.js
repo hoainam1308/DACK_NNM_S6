@@ -1,3 +1,4 @@
+const user = require('../schemas/user');
 const User = require('../schemas/user');
 
 const getAllUsers = async () => {
@@ -28,6 +29,19 @@ const getUserByEmail = async (email) => {
     }
 };
 
+const getUserById = async (userId) => {
+    try {
+        const user = await User.findById(userId).populate('role');
+        return user;
+    } catch (error) {
+        throw new Error('Lỗi khi lấy thông tin người dùng.');
+    }
+};
+
+const getUserByToken = async (token) => {
+    return await user.findOne({ resetPasswordToken: token});
+}
+
 const createUser = async (userData) => {
     try {
         const newUser = new User({
@@ -46,4 +60,4 @@ const createUser = async (userData) => {
     }
 };
 
-module.exports = { getAllUsers, getUsersByRole, getUserByEmail, createUser };
+module.exports = { getAllUsers, getUsersByRole, getUserByEmail, getUserByToken, createUser };
